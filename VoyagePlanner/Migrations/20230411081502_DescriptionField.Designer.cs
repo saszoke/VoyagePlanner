@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using VoyagePlanner.Data;
 
@@ -11,9 +12,11 @@ using VoyagePlanner.Data;
 namespace VoyagePlanner.Migrations
 {
     [DbContext(typeof(VoyagePlannerContext))]
-    partial class VoyagePlannerContextModelSnapshot : ModelSnapshot
+    [Migration("20230411081502_DescriptionField")]
+    partial class DescriptionField
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -34,33 +37,17 @@ namespace VoyagePlanner.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("PersonId")
+                        .HasColumnType("int");
+
                     b.Property<int>("ReductionPercentage")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Allowances");
-                });
+                    b.HasIndex("PersonId");
 
-            modelBuilder.Entity("VoyagePlanner.Models.Country", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Countries");
+                    b.ToTable("Allowance");
                 });
 
             modelBuilder.Entity("VoyagePlanner.Models.Destination", b =>
@@ -70,9 +57,6 @@ namespace VoyagePlanner.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("CountryId")
-                        .HasColumnType("int");
 
                     b.Property<string>("Description")
                         .IsRequired()
@@ -92,8 +76,6 @@ namespace VoyagePlanner.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("CountryId");
 
                     b.ToTable("Destinations");
                 });
@@ -131,9 +113,6 @@ namespace VoyagePlanner.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("AllowanceId")
-                        .HasColumnType("int");
-
                     b.Property<DateTime>("DateOfBirth")
                         .HasColumnType("datetime2");
 
@@ -149,8 +128,6 @@ namespace VoyagePlanner.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("AllowanceId");
 
                     b.HasIndex("VoyageId");
 
@@ -185,14 +162,11 @@ namespace VoyagePlanner.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<DateTime>("DateOfVoyage")
+                        .HasColumnType("datetime2");
+
                     b.Property<int>("DestinationId")
                         .HasColumnType("int");
-
-                    b.Property<DateTime>("EndDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("StartDate")
-                        .HasColumnType("datetime2");
 
                     b.Property<int>("TravelTypeId")
                         .HasColumnType("int");
@@ -206,15 +180,11 @@ namespace VoyagePlanner.Migrations
                     b.ToTable("Voyages");
                 });
 
-            modelBuilder.Entity("VoyagePlanner.Models.Destination", b =>
+            modelBuilder.Entity("VoyagePlanner.Models.Allowance", b =>
                 {
-                    b.HasOne("VoyagePlanner.Models.Country", "Country")
-                        .WithMany()
-                        .HasForeignKey("CountryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Country");
+                    b.HasOne("VoyagePlanner.Models.Person", null)
+                        .WithMany("Allowances")
+                        .HasForeignKey("PersonId");
                 });
 
             modelBuilder.Entity("VoyagePlanner.Models.Extra", b =>
@@ -226,10 +196,6 @@ namespace VoyagePlanner.Migrations
 
             modelBuilder.Entity("VoyagePlanner.Models.Person", b =>
                 {
-                    b.HasOne("VoyagePlanner.Models.Allowance", null)
-                        .WithMany("People")
-                        .HasForeignKey("AllowanceId");
-
                     b.HasOne("VoyagePlanner.Models.Voyage", "Voyage")
                         .WithMany("Persons")
                         .HasForeignKey("VoyageId")
@@ -258,9 +224,9 @@ namespace VoyagePlanner.Migrations
                     b.Navigation("TravelType");
                 });
 
-            modelBuilder.Entity("VoyagePlanner.Models.Allowance", b =>
+            modelBuilder.Entity("VoyagePlanner.Models.Person", b =>
                 {
-                    b.Navigation("People");
+                    b.Navigation("Allowances");
                 });
 
             modelBuilder.Entity("VoyagePlanner.Models.Voyage", b =>

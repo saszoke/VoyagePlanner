@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using VoyagePlanner.Data;
 
@@ -11,9 +12,11 @@ using VoyagePlanner.Data;
 namespace VoyagePlanner.Migrations
 {
     [DbContext(typeof(VoyagePlannerContext))]
-    partial class VoyagePlannerContextModelSnapshot : ModelSnapshot
+    [Migration("20230411100028_FixingAllowance3")]
+    partial class FixingAllowance3
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -49,10 +52,6 @@ namespace VoyagePlanner.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -185,14 +184,11 @@ namespace VoyagePlanner.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<DateTime>("DateOfVoyage")
+                        .HasColumnType("datetime2");
+
                     b.Property<int>("DestinationId")
                         .HasColumnType("int");
-
-                    b.Property<DateTime>("EndDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("StartDate")
-                        .HasColumnType("datetime2");
 
                     b.Property<int>("TravelTypeId")
                         .HasColumnType("int");

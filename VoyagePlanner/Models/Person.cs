@@ -9,6 +9,7 @@
         public string Lastname { get; set; }
 
         public DateTime DateOfBirth { get; set; }
-        public List<Allowance> Allowances { get; set; }
+
+        //public List<Allowance> Allowances { get; set; }
     }
 }

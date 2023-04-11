@@ -20,6 +20,10 @@ namespace VoyagePlanner.Data
         public DbSet<VoyagePlanner.Models.Destination> Destinations { get; set; } = default!;
         public DbSet<VoyagePlanner.Models.Extra> Extras { get; set; } = default!;
         public DbSet<VoyagePlanner.Models.TravelType> TravelTypes { get; set; } = default!;
+        public DbSet<VoyagePlanner.Models.Country> Countries { get; set; } = default!;
+        public DbSet<VoyagePlanner.Models.Allowance> Allowances { get; set; } = default!;
+
+
 
     }
 }
