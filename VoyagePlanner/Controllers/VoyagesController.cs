@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -63,9 +64,11 @@ namespace VoyagePlanner.Controllers
 
             var travelTypes = await _context.TravelTypes.Select(tt => tt.Name).ToListAsync();  //from travelType in _context.TravelTypes.AsEnumerable() select travelType.Name;
             Destination destination = await _context.Destinations.FindAsync(destinationId);
-
-            ViewBag.travelTypes = travelTypes;
+            ViewBag.dropdown = TravelTypeList(travelTypes);
             ViewBag.destination = destination;
+
+            //VoyageDTO voyage = new VoyageDTO();
+            //voyage.TravelTypeList = TravelTypeList(travelTypes);
             return View("VoyageForm");
         }
 
@@ -85,26 +88,25 @@ namespace VoyagePlanner.Controllers
                 newVoyage.Destination = d;
                 _context.Voyages.Add(newVoyage);
                 await _context.SaveChangesAsync();
-                return RedirectToAction("Options", voyage);
+                return RedirectToAction("Options", newVoyage);
             }
             return RedirectToAction("VoyageHandler");
         }
 
         // GET: Voyages/Edit/5
-        //public async Task<IActionResult> Edit(int? id)
-        //{
-        //    if (id == null || _context.Voyage == null)
-        //    {
-        //        return NotFound();
-        //    }
+        public async Task<IActionResult> Options(Voyage voyage)
+        {
+            var extras = await _context.ExtraDetail.ToListAsync();
 
-        //    var voyage = await _context.Voyage.FindAsync(id);
-        //    if (voyage == null)
-        //    {
-        //        return NotFound();
-        //    }
-        //    return View(voyage);
-        //}
+            List<string> names = new List<string>();
+            foreach (PropertyDescriptor property in TypeDescriptor.GetProperties(new ExtraDetail()))
+                {
+                    names.Add(property.Name);
+                }
+            ViewBag.extras = extras;
+            ViewBag.names = names;
+            return View("Options",voyage);
+        }
 
         // POST: Voyages/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
@@ -182,5 +184,16 @@ namespace VoyagePlanner.Controllers
         //{
         //    return (_context.Voyage?.Any(e => e.Id == id)).GetValueOrDefault();
         //}
+        private SelectList TravelTypeList(List<string> travelTypes)
+        {
+            List<SelectListItem> countries = new List<SelectListItem>();
+            travelTypes.ForEach(travelType =>
+            {
+                countries.Add(new SelectListItem { Text = travelType, Value = travelType });
+            });
+            SelectList items = new SelectList(countries, "Value", "Text");
+            return items;
+        }
     }
+    
 }

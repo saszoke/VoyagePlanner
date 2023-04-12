@@ -1,4 +1,7 @@
-﻿namespace VoyagePlanner.Models.DTOs
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using System.ComponentModel.DataAnnotations;
+
+namespace VoyagePlanner.Models.DTOs
 {
     public class VoyageDTO
     {
@@ -7,6 +10,8 @@
 
         public string DestinationId { get; set; }
 
+        //[Required(ErrorMessage = "Travel type is required.")]
+        [TransportType]
         public string TravelType { get; set; }
     }
 }
