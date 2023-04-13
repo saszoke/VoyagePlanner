@@ -3,17 +3,30 @@
     ViewBag.Title = "My View";
     string uniqueName = "extraId-" + Model.ExtraDetail.Id;
     string uniqueQuantity = "extraQuantity-" + Model.ExtraDetail.Id;
+    string uniqueButtonId = "uniqueButtonId-" + Model.ExtraDetail.Id;
 }
 <h2>Increment</h2>
 <p>Quantity: @Model.Quantity</p>
-<button class="incrementButton" name="@Model.ExtraDetail.Id">Plus</button>
+<button onclick="handler(event)" class="incrementButton" name="@Model.ExtraDetail.Id">Plus</button>
 @Html.Hidden(uniqueName, Model.ExtraDetail.Id, new { id = uniqueName })
 @Html.Hidden(uniqueQuantity, Model.Quantity, new { id = uniqueQuantity })
 
+<script>
+    function handler(event){
+        let selector = `#extraQuantity-${event.target.name}`;
+        let containerSelector = `#partialViewContainer${event.target.name}`
 
-@*@using (Html.BeginForm("IncrementHandler", "Voyages", FormMethod.Post))
-{
-    <button type="submit" name="incrementBtn">Increment</button>
-    @Html.Hidden("localVariable", Model)
-}
-*@
+        $.ajax({
+            url: '/Voyages/IncrementHandler',
+            method: 'POST',
+            contentType: "application/json",
+            headers: {
+                'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+            },
+            data: JSON.stringify({ extraId: event.target.name, extraQuantity: $(selector).val() }),
+            success: function (result) {
+                $(containerSelector).html(result);
+            }
+        });
+    }
+</script>
