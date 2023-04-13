@@ -1,8 +1,13 @@
-﻿@using System.Collections;
+﻿<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+<script src="~/js/site.js" asp-append-version="true"></script>
+@using System.Collections;
 @*@model IEnumerable<VoyagePlanner.Models.ExtraDetail>*@
 @{
     List<ExtraDetail> Model = ViewBag.extras;
     ExtraDetail randomModel = Model.FirstOrDefault();
+    Extra extra = new Extra();
+    
 }
 
 <p>
@@ -11,21 +16,19 @@
 <table class="table">
     <thead>
         <tr>
-            
                 @{
                     for(int i=1; i<4; i++)
                     {
                     <th>@ViewBag.names[i]</th>
                     }
                 }
-
-            
-
         </tr>
     </thead>
     <tbody>
 @foreach (var item in Model) {
-        <tr>
+            extra.ExtraDetail = item;
+            string uniqueName = "partialViewContainer" + item.Id;
+            <tr>
             <td>
                 @Html.DisplayFor(modelItem => item.Name)
             </td>
@@ -36,11 +39,36 @@
                 @Html.DisplayFor(modelItem => item.Price)
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                <div id="@uniqueName">
+                    @Html.Partial("~/Views/Partial/Increment.cshtml", extra)
+                </div>
             </td>
         </tr>
 }
+        @Html.AntiForgeryToken()
     </tbody>
 </table>
+<script>
+    $(document).ready(function () {
+        $('.incrementButton').click(function (e) {
+            console.log("called")
+            let selector = `#extraQuantity-${this.name}`;
+            let containerSelector = `#partialViewContainer${this.name}`
+            console.log(selector)
+            console.log($(selector).val())
+
+            $.ajax({
+                url: '/Voyages/IncrementHandler',
+                method: 'POST',
+                contentType: "application/json",
+                headers: {
+                    'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+                },
+                data: JSON.stringify({ extraId: this.name, extraQuantity: $(selector).val() }),
+                success: function (result) {
+                    $(containerSelector).html(result);
+                }
+            });
+        });
+    });
+</script>

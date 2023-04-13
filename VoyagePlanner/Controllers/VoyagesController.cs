@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using VoyagePlanner.Data;
 using VoyagePlanner.Models;
 using VoyagePlanner.Models.DTOs;
@@ -106,6 +108,22 @@ namespace VoyagePlanner.Controllers
             ViewBag.extras = extras;
             ViewBag.names = names;
             return View("Options",voyage);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> IncrementHandler([FromBody] JsonElement data)
+        {
+            dynamic obj = JsonConvert.DeserializeObject<dynamic>(data.GetRawText());
+
+            int id = (int) obj.extraId;
+            int quantity = (int) obj.extraQuantity;
+            var item = await _context.ExtraDetail.FindAsync(id);
+            Extra extra = new Extra();
+            extra.ExtraDetail = item;
+            extra.Quantity = ++quantity;
+            return PartialView("~/Views/Partial/Increment.cshtml", extra);
+
         }
 
         // POST: Voyages/Edit/5

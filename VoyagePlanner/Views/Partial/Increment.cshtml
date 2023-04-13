@@ -1,0 +1,19 @@
+﻿@model Extra
+@{
+    ViewBag.Title = "My View";
+    string uniqueName = "extraId-" + Model.ExtraDetail.Id;
+    string uniqueQuantity = "extraQuantity-" + Model.ExtraDetail.Id;
+}
+<h2>Increment</h2>
+<p>Quantity: @Model.Quantity</p>
+<button class="incrementButton" name="@Model.ExtraDetail.Id">Plus</button>
+@Html.Hidden(uniqueName, Model.ExtraDetail.Id, new { id = uniqueName })
+@Html.Hidden(uniqueQuantity, Model.Quantity, new { id = uniqueQuantity })
+
+
+@*@using (Html.BeginForm("IncrementHandler", "Voyages", FormMethod.Post))
+{
+    <button type="submit" name="incrementBtn">Increment</button>
+    @Html.Hidden("localVariable", Model)
+}
+*@
