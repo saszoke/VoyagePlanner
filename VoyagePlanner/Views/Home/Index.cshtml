@@ -1,8 +1,13 @@
-﻿@{
+﻿@model IEnumerable<VoyagePlanner.Models.Allowance>
+
+@{
     ViewData["Title"] = "Voyage Planner";
 }
 
 <div class="text-center">
     <h1 class="display-4">Voyage Planner</h1>
     <strong><a asp-controller="voyages" asp-action="countries">Plan your journey</a> today!</strong> 
+</div>
+<div id="toUpdate">
+    @Html.Partial("~/Views/Partial/PersonsContainer.cshtml", Model)
 </div>

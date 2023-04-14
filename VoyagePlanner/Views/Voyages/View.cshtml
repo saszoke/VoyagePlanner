@@ -48,27 +48,3 @@
         @Html.AntiForgeryToken()
     </tbody>
 </table>
-@*<script>
-    $(document).ready(function () {
-        $('.incrementButton').click(function (e) {
-            console.log("called")
-            let selector = `#extraQuantity-${this.name}`;
-            let containerSelector = `#partialViewContainer${this.name}`
-            console.log(selector)
-            console.log($(selector).val())
-
-            $.ajax({
-                url: '/Voyages/IncrementHandler',
-                method: 'POST',
-                contentType: "application/json",
-                headers: {
-                    'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
-                },
-                data: JSON.stringify({ extraId: this.name, extraQuantity: $(selector).val() }),
-                success: function (result) {
-                    $(containerSelector).html(result);
-                }
-            });
-        });
-    });
-</script>*@

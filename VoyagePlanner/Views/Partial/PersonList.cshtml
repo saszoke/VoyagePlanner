@@ -1,0 +1,46 @@
+﻿@model IEnumerable<VoyagePlanner.Models.Person>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Firstname)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Lastname)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DateOfBirth)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Allowance.Name)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        string uniqueName = item.Firstname + "_" + item.Lastname + "_" + item.DateOfBirth;
+            @Html.Hidden(uniqueName,"", new { @class = "listValues", firstname = item.Firstname, lastname = item.Lastname, dateOfBirth = item.DateOfBirth, allowanceId = item.Allowance.Id })
+
+            <tr>
+            <td>
+                    @Html.DisplayFor(modelItem => item.Firstname, new { htmlAttributes = new { @class = "firstnameData" } })
+            </td>
+            <td>
+                    @Html.DisplayFor(modelItem => item.Lastname, new { htmlAttributes = new { @class = "lastnameData" } })
+            </td>
+            <td>
+                    @Html.DisplayFor(modelItem => item.DateOfBirth, new { htmlAttributes = new { @class = "dateOfBirthData" } })
+            </td>
+            <td>
+                    @Html.DisplayFor(modelItem => item.Allowance.Name, new { htmlAttributes = new { @class = "allowanceNameData" } })
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

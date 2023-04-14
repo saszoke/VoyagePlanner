@@ -10,6 +10,8 @@
 
         public DateTime DateOfBirth { get; set; }
 
+        public Allowance Allowance { get; set; }
+
         //public List<Allowance> Allowances { get; set; }
     }
 }

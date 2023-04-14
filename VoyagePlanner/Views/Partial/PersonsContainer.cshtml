@@ -1,0 +1,55 @@
+﻿@model IEnumerable<VoyagePlanner.Models.Allowance>
+
+@{
+    ViewData["Title"] = "Voyage Planner";
+    List<Person> list = new List<Person>();
+    if (ViewBag.ExistingPersons != null)
+    {
+        foreach (Person person in ViewBag.ExistingPersons)
+        {
+            list.Add(person);
+        }
+    }
+}
+
+@Html.Partial("~/Views/Partial/CreatePerson.cshtml", Model)
+@Html.Partial("~/Views/Partial/PersonList.cshtml", list)
+
+
+
+<script>
+    function handler(event) {
+        var form = $("#createPersonForm")[0];
+        var formData = new FormData(form);
+        var firstName = formData.get("Firstname");
+        var lastName = formData.get("Lastname");
+        var dateOfBirth = formData.get("DateOfBirth");
+        var chosenAllowance = document.querySelector('input[name="allowance-choice"]:checked').value;
+        console.log($(".listValues").toArray())
+        console.log($(".listValues")[0])
+
+        var alreadyExistingPersons = [];
+        $(".listValues").toArray().forEach(listValue => alreadyExistingPersons.push({
+            firstname: listValue.getAttribute("firstname"),
+            lastname: listValue.getAttribute("lastname"),
+            dateOfBirth: listValue.getAttribute("dateOfBirth"),
+            allowanceId: listValue.getAttribute("allowanceId")
+        }))
+
+
+        let selector = `#extraQuantity-${event.target.name}`;
+
+        $.ajax({
+            url: '/Voyages/PersonAddition',
+            method: 'POST',
+            contentType: "application/json",
+            headers: {
+                'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+            },
+            data: JSON.stringify({ firstName, lastName, dateOfBirth, chosenAllowance, alreadyExistingPersons }),
+            success: function (result) {
+                $("#toUpdate").html(result);
+            }
+        });
+    }
+</script>

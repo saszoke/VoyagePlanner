@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using VoyagePlanner.Data;
 
@@ -11,9 +12,11 @@ using VoyagePlanner.Data;
 namespace VoyagePlanner.Migrations
 {
     [DbContext(typeof(VoyagePlannerContext))]
-    partial class VoyagePlannerContextModelSnapshot : ModelSnapshot
+    [Migration("20230414105821_TuningPerson")]
+    partial class TuningPerson
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -156,7 +159,7 @@ namespace VoyagePlanner.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("AllowanceId")
+                    b.Property<int?>("AllowanceId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("DateOfBirth")
@@ -259,19 +262,15 @@ namespace VoyagePlanner.Migrations
 
             modelBuilder.Entity("VoyagePlanner.Models.Person", b =>
                 {
-                    b.HasOne("VoyagePlanner.Models.Allowance", "Allowance")
+                    b.HasOne("VoyagePlanner.Models.Allowance", null)
                         .WithMany("People")
-                        .HasForeignKey("AllowanceId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("AllowanceId");
 
                     b.HasOne("VoyagePlanner.Models.Voyage", "Voyage")
                         .WithMany("Persons")
                         .HasForeignKey("VoyageId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Allowance");
 
                     b.Navigation("Voyage");
                 });

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Text.Json;
+using System.Text.Json.Nodes;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -123,8 +124,40 @@ namespace VoyagePlanner.Controllers
             extra.ExtraDetail = item;
             extra.Quantity = ++quantity;
             return PartialView("~/Views/Partial/Increment.cshtml", extra);
-
         }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> PersonAddition([FromBody] JsonElement data)
+        {
+            dynamic obj = JsonConvert.DeserializeObject<dynamic>(data.GetRawText());
+
+            Person person = new Person();
+            person.Firstname = obj.firstName;
+            person.Lastname = obj.lastName;
+            person.DateOfBirth = obj.dateOfBirth;
+            Allowance allowance = await _context.Allowances.FindAsync((int) obj.chosenAllowance);
+            person.Allowance = allowance;
+            List<dynamic> objectList = obj.alreadyExistingPersons.ToObject<List<dynamic>>();
+            var existingPersonsList = new List<Person>();
+            if (objectList.Count > 0)
+            {
+                objectList.ForEach(async p =>
+                {
+                    Person np = new Person();
+                    np.Firstname = p.firstname;
+                    np.Lastname = p.lastname;
+                    np.DateOfBirth = p.dateOfBirth;
+                    np.Allowance = await _context.Allowances.FindAsync((int) p.allowanceId);
+                    existingPersonsList.Add(np);
+                });
+            }
+            existingPersonsList.Add(person);
+            ViewBag.ExistingPersons = existingPersonsList;
+            return PartialView("~/Views/Partial/PersonsContainer.cshtml", await _context.Allowances.ToListAsync());
+            
+        }
+        
 
         // POST: Voyages/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.

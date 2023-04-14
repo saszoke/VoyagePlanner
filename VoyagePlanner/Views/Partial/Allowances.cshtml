@@ -1,0 +1,18 @@
+﻿@model IEnumerable<VoyagePlanner.Models.Allowance>
+
+
+
+@foreach (var item in Model) {
+            string AllowanceId = "allowance-" + item.Id.ToString();
+@*            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ReductionPercentage)
+            </td>*@
+            <input type="radio" class="btn-check" name="allowance-choice" id="@AllowanceId" autocomplete="off" value="@item.Id" checked>
+            <label class="btn btn-outline-success" for="@AllowanceId">@item.Name - @item.ReductionPercentage% off</label>
+            @*<td>
+                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a>
+            </td>*@
+}
