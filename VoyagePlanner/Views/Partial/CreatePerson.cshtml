@@ -1,9 +1,9 @@
-﻿@model IEnumerable<VoyagePlanner.Models.Allowance>
-
-@{
+﻿@{
+    Person p = new Person();
+    p.DateOfBirth = new DateTime(2000,01,01);
 }
 
-@Html.Partial("~/Views/Partial/Allowances.cshtml", Model)
-@Html.Partial("~/Views/Partial/AddPerson.cshtml", new Person())
+@Html.Partial("~/Views/Partial/Allowances.cshtml")
+@Html.Partial("~/Views/Partial/AddPerson.cshtml", p)
 
 

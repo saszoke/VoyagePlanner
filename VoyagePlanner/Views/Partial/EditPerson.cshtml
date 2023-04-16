@@ -6,12 +6,35 @@
 <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 <script src="~/js/site.js" asp-append-version="true"></script>
 @model VoyagePlanner.Models.Person
+@{
+    string IsChecked(int id)
+    {
+        if (id == Model.Allowance.Id)
+        {
+            return "checked";
 
+        }
+        return "";
+    }
+}
+
+@foreach (var item in ViewBag.Allowances)
+{
+    string AllowanceId = "allowance-" + item.Id.ToString();
+    <div class="my-1">
+        <input type="radio" class="btn-check" name="allowance-choice" id="@AllowanceId" autocomplete="off" value="@item.Id" @IsChecked(item.Id)>
+        <label class="btn btn-outline-success" for="@AllowanceId">@item.Name - @item.ReductionPercentage% off</label>
+    </div>
+
+}
 <hr />
 <div class="row">
-    <div class="col-md-4">
-        <form asp-action="AddPerson" id="createPersonForm">
+    <div class="col-md-4">  
+        <form asp-action="EditPerson" id="editPersonForm">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <input hidden asp-for="Id" class="form-control" />
+            </div>
             <div class="form-group">
                 <label asp-for="Firstname" class="control-label"></label>
                 <input asp-for="Firstname" class="form-control" />
@@ -28,10 +51,10 @@
                 <span asp-validation-for="DateOfBirth" class="text-danger"></span>
             </div>
             <div class="form-group mt-2">
-                <input type="submit" onclick="handler(event)" value="Add" class="btn btn-outline-success" />
+                <input type="submit" onclick="editHandler(event)" value="Update" class="btn btn-outline-success" />
             </div>
-            <button class="btn btn-outline-success mt-2" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
-            Done
+            <button class="btn btn-outline-success mt-2" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                Cancel
             </button>
         </form>
     </div>
@@ -39,12 +62,14 @@
 
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }
 
 <script>
     $(document).ready(function () {
-        $("#createPersonForm").submit(function (event) {
+        $("#editPersonForm").submit(function (event) {
             event.preventDefault(); // prevent the page from reloading
         });
     });

@@ -5,19 +5,37 @@
     string uniqueQuantity = "extraQuantity-" + Model.ExtraDetail.Id;
     string uniqueButtonId = "uniqueButtonId-" + Model.ExtraDetail.Id;
 }
-<h2>Increment</h2>
 <p>Quantity: @Model.Quantity</p>
-<button onclick="handler(event)" class="incrementButton" name="@Model.ExtraDetail.Id">Plus</button>
+<button onclick="handlerPlus(event)" class="incrementButton" name="@Model.ExtraDetail.Id">Plus</button>
+<button onclick="handlerMinus(event)" class="decrementButton" name="@Model.ExtraDetail.Id">Minus</button>
+
 @Html.Hidden(uniqueName, Model.ExtraDetail.Id, new { id = uniqueName })
 @Html.Hidden(uniqueQuantity, Model.Quantity, new { id = uniqueQuantity })
 
 <script>
-    function handler(event){
+    function handlerPlus(event){
         let selector = `#extraQuantity-${event.target.name}`;
         let containerSelector = `#partialViewContainer${event.target.name}`
 
         $.ajax({
             url: '/Voyages/IncrementHandler',
+            method: 'POST',
+            contentType: "application/json",
+            headers: {
+                'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+            },
+            data: JSON.stringify({ extraId: event.target.name, extraQuantity: $(selector).val() }),
+            success: function (result) {
+                $(containerSelector).html(result);
+            }
+        });
+    }
+    function handlerMinus(event) {
+        let selector = `#extraQuantity-${event.target.name}`;
+        let containerSelector = `#partialViewContainer${event.target.name}`
+
+        $.ajax({
+            url: '/Voyages/DecrementHandler',
             method: 'POST',
             contentType: "application/json",
             headers: {

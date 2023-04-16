@@ -10,18 +10,15 @@
     
 }
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
 <table class="table">
     <thead>
         <tr>
-                @{
-                    for(int i=1; i<4; i++)
-                    {
-                    <th>@ViewBag.names[i]</th>
-                    }
+            @{
+                for(int i=1; i<4; i++)
+                {
+                <th>@ViewBag.names[i]</th>
                 }
+            }
         </tr>
     </thead>
     <tbody>

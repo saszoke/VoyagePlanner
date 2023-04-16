@@ -21,7 +21,7 @@
     <tbody>
 @foreach (var item in Model) {
         string uniqueName = item.Firstname + "_" + item.Lastname + "_" + item.DateOfBirth;
-            @Html.Hidden(uniqueName,"", new { @class = "listValues", firstname = item.Firstname, lastname = item.Lastname, dateOfBirth = item.DateOfBirth, allowanceId = item.Allowance.Id })
+            @Html.Hidden(uniqueName,"", new { @class = "listValues", firstname = item.Firstname, lastname = item.Lastname, dateOfBirth = item.DateOfBirth, allowanceId = item.Allowance.Id, id = item.Id })
 
             <tr>
             <td>
@@ -37,10 +37,48 @@
                     @Html.DisplayFor(modelItem => item.Allowance.Name, new { htmlAttributes = new { @class = "allowanceNameData" } })
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                <a onclick="fillForm(@item.Id)">Edit</a> |
+                <a onclick="removePerson(@item.Id)">Delete</a>
             </td>
         </tr>
 }
     </tbody>
 </table>
+
+<script>
+    function fillForm(id){
+        $.ajax({
+            url: `/Voyages/ShowEditForm/${id}`,
+            method: 'GET',
+            contentType: "application/json",
+            success: function (result) {
+                console.log($("#editForm"))
+                $("#editForm").html(result);
+            }
+        });
+    }
+
+    function removePerson(id){
+        var alreadyExistingPersons = [];
+        $(".listValues").toArray().forEach(listValue => alreadyExistingPersons.push({
+            id: listValue.getAttribute("id"),
+            firstname: listValue.getAttribute("firstname"),
+            lastname: listValue.getAttribute("lastname"),
+            dateOfBirth: listValue.getAttribute("dateOfBirth"),
+            allowanceId: listValue.getAttribute("allowanceId")
+        }))
+        $.ajax({
+            url: `/Voyages/RemoveAndRefresh/${id}`,
+            method: 'PUT',
+            contentType: "application/json",
+            headers: {
+                'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+            },
+            data: JSON.stringify({ alreadyExistingPersons }),
+            success: function (result) {
+                $("#toUpdate").html(result);
+            }
+        });
+    }
+
+</script>
