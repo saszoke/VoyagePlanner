@@ -16,6 +16,10 @@
         }
     }
 }
+<h3>Passangers</h3>
+<div class=@visible>
+    @Html.Partial("~/Views/Partial/PersonList.cshtml", list)
+</div>
 
 <div class="accordion my-2">
     <div class="accordion-item">
@@ -32,9 +36,6 @@
             </div>
         </div>
     </div>
-</div>
-<div class=@visible>
-    @Html.Partial("~/Views/Partial/PersonList.cshtml", list)
 </div>
 
 <script>

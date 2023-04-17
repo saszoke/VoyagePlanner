@@ -14,6 +14,7 @@
 
 <script>
     function handlerPlus(event){
+        gatherExtraValues();
         let selector = `#extraQuantity-${event.target.name}`;
         let containerSelector = `#partialViewContainer${event.target.name}`
 
@@ -31,6 +32,7 @@
         });
     }
     function handlerMinus(event) {
+        gatherExtraValues();
         let selector = `#extraQuantity-${event.target.name}`;
         let containerSelector = `#partialViewContainer${event.target.name}`
 

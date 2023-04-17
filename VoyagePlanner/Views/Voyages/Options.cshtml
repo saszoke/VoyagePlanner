@@ -64,3 +64,20 @@
     <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
     <a asp-action="Index">Back to List</a>
 </div>
+
+@*<input id="extraQuantity-5" name="extraQuantity-5" type="hidden" value="2">*@
+<script>
+    function gatherExtraValues(){
+        let extras = [];
+
+        $('[id*="extraQuantity"]').toArray().forEach(element =>{
+            if(element.value > 0){
+                extras.push({
+                    id: element.id
+                });
+            }
+        })
+        console.log(extras);
+        return extras;
+    }
+</script>

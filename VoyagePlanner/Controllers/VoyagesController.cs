@@ -70,8 +70,6 @@ namespace VoyagePlanner.Controllers
             ViewBag.dropdown = TravelTypeList(travelTypes);
             ViewBag.destination = destination;
 
-            //VoyageDTO voyage = new VoyageDTO();
-            //voyage.TravelTypeList = TravelTypeList(travelTypes);
             return View("VoyageForm");
         }
 
@@ -83,15 +81,12 @@ namespace VoyagePlanner.Controllers
             if (ModelState.IsValid)
             {
                 TravelType tType = await _context.TravelTypes.FirstOrDefaultAsync(tt => tt.Name.Equals(voyage.TravelType));
-                //Country c = _context.Entry(d.Country).Entity;
-                var destination = await _context.Destinations.Include(d => d.Country).Where(x => x.Id == Int32.Parse(voyage.DestinationId)).FirstOrDefaultAsync(); // await _context.Destinations.Include(d => d.Country).Where(x => x.Id == 2);
-                //Destination d = // await _context.Destinations.Include(d => d.Country).FindAsync(Int32.Parse(voyage.DestinationId));
+                var destination = await _context.Destinations.Include(d => d.Country).Where(x => x.Id == Int32.Parse(voyage.DestinationId)).FirstOrDefaultAsync();
                 Voyage newVoyage = new Voyage();
                 newVoyage.StartDate = voyage.StartDate;
                 newVoyage.EndDate = voyage.EndDate;
                 newVoyage.TravelType = tType;
                 newVoyage.Destination = destination;
-                //newVoyage.Destination.Country = c;
                 _context.Voyages.Add(newVoyage);
                 await _context.SaveChangesAsync();
 
@@ -102,10 +97,9 @@ namespace VoyagePlanner.Controllers
             return RedirectToAction("VoyageHandler");
         }
 
-        // GET: Voyages/Edit/5
         public async Task<IActionResult> Options(Voyage voyage)
         {
-            Voyage obj = HttpContext.Session.GetObject<Voyage>("voyageObject"); // GetObject is an extension method, see below
+            Voyage obj = HttpContext.Session.GetObject<Voyage>("voyageObject");
 
             //var existingVoyage = _context.Entry(voyage).Entity;
             //var eV = await _context.Voyages.FindAsync((int)voyage.Id);
@@ -164,7 +158,7 @@ namespace VoyagePlanner.Controllers
         {
             var allowances = await _context.Allowances.ToListAsync();
             dynamic obj = JsonConvert.DeserializeObject<dynamic>(data.GetRawText());
-            Voyage voyage = await _context.Voyages.FindAsync(1049);
+            Voyage voyage = await _context.Voyages.FindAsync(1080);
 
             Person person = new Person();
             person.Firstname = obj.firstName;
@@ -179,7 +173,7 @@ namespace VoyagePlanner.Controllers
             {
                 objectList.ForEach(async p =>
                 {
-                    Allowance newPersonsAllowance = allowances.Where(allowance => allowance.Id == (int) p.allowanceId).ToList()[0];  //await _context.Allowances.FindAsync((int)p.allowanceId);
+                    Allowance newPersonsAllowance = allowances.Where(allowance => allowance.Id == (int) p.allowanceId).ToList()[0];
                     Person np = new Person();
                     np.Id = p.id;
                     np.Firstname = p.firstname;
@@ -280,7 +274,7 @@ namespace VoyagePlanner.Controllers
                     np.Firstname = p.firstname;
                     np.Lastname = p.lastname;
                     np.DateOfBirth = p.dateOfBirth;
-                    np.Allowance = newPersonsAllowance;// await _context.Allowances.FindAsync((int)p.allowanceId);
+                    np.Allowance = newPersonsAllowance;
                     existingPersonsList.Add(np);
                 }
             });
