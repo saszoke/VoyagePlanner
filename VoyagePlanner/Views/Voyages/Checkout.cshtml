@@ -1,0 +1,20 @@
+﻿@model Voyage
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+<h1>CHECKOUT</h1>
+<p>@Model.Id</p>
+<p>@Model.Destination.Country.Name</p>
+<p>@Model.Destination.Name</p>
+@foreach(var person in Model.Persons.ToList())
+{
+    string fullName = person.Firstname + " " + person.Lastname;
+    <p>@fullName</p>
+}
+<p>@Model.TravelType.Name</p>
+@foreach (var extra in Model.Extras.ToList())
+{
+    <p>@extra.ExtraDetail.Name <span>x @extra.Quantity</span></p>
+}

@@ -158,7 +158,8 @@ namespace VoyagePlanner.Controllers
         {
             var allowances = await _context.Allowances.ToListAsync();
             dynamic obj = JsonConvert.DeserializeObject<dynamic>(data.GetRawText());
-            Voyage voyage = await _context.Voyages.FindAsync(1080);
+            int voyageId = obj.voyageId;
+            Voyage voyage = await _context.Voyages.FindAsync(voyageId);
 
             Person person = new Person();
             person.Firstname = obj.firstName;
@@ -190,7 +191,7 @@ namespace VoyagePlanner.Controllers
             ViewBag.ExistingPersons = existingPersonsList;
             ViewBag.allowances = await _context.Allowances.ToListAsync();
 
-            return PartialView("~/Views/Partial/PersonsContainer.cshtml");
+            return PartialView("~/Views/Partial/PersonsContainer.cshtml", voyage);
             
         }
 
@@ -199,6 +200,8 @@ namespace VoyagePlanner.Controllers
             var allowances = await _context.Allowances.ToListAsync();
 
             dynamic obj = JsonConvert.DeserializeObject<dynamic>(data.GetRawText());
+            int voyageId = obj.voyageId;
+            Voyage voyage = await _context.Voyages.FindAsync(voyageId);
 
             Person person = await _context.Persons.FindAsync((int)obj.Id);
             person.Firstname = obj.firstName;
@@ -238,7 +241,7 @@ namespace VoyagePlanner.Controllers
             ViewBag.ExistingPersons = existingPersonsList;
             ViewBag.allowances = await _context.Allowances.ToListAsync();
 
-            return PartialView("~/Views/Partial/PersonsContainer.cshtml", allowances);
+            return PartialView("~/Views/Partial/PersonsContainer.cshtml", voyage);
 
         }
 
@@ -255,7 +258,8 @@ namespace VoyagePlanner.Controllers
             var allowances = await _context.Allowances.ToListAsync();
 
             dynamic obj = JsonConvert.DeserializeObject<dynamic>(data.GetRawText());
-
+            int voyageId = obj.voyageId;
+            Voyage voyage = await _context.Voyages.FindAsync(voyageId);
             Person person = await _context.Persons.FindAsync((int) id);
             _context.Persons.Remove(person);
             _context.SaveChangesAsync();
@@ -281,8 +285,56 @@ namespace VoyagePlanner.Controllers
             ViewBag.ExistingPersons = existingPersonsList;
             ViewBag.allowances = allowances;
 
-            return PartialView("~/Views/Partial/PersonsContainer.cshtml");
+            return PartialView("~/Views/Partial/PersonsContainer.cshtml", voyage);
 
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> InitiateCheckout([FromBody] JsonElement json)
+        {
+            dynamic obj = JsonConvert.DeserializeObject<dynamic>(json.GetRawText());
+
+            List<ExtraDetail> allExtra = await _context.ExtraDetail.ToListAsync();
+            int voyageId = obj.voyageId;
+            Voyage voyage = await _context.Voyages.FirstOrDefaultAsync(voyage => voyage.Id == voyageId);
+
+            List<dynamic> dynamics = obj.extras.ToObject<List<dynamic>>();
+            dynamics.ForEach(item =>
+            {
+                Extra extra = new Extra();
+                extra.Voyage = voyage;
+                allExtra.ForEach(extraDetail =>
+                {
+                    if (extraDetail.Id == (int) item.id) {
+                        extra.ExtraDetail = extraDetail;
+                    }
+                });
+                extra.Quantity = item.quantity;
+                
+                _context.Add(extra);
+            });
+            _context.SaveChangesAsync();
+
+
+            //return RedirectToAction("Checkout", new { voyageId = voyageId.ToString() });
+
+            string url = Url.Action("Checkout", "Voyages", new { voyageId = voyageId.ToString() });
+
+            return Json(new { url = url });
+        }
+
+        public IActionResult Checkout(string voyageId)
+        {
+            int voyageIdInt = Int32.Parse(voyageId);
+            var voyage = _context.Voyages
+                .Include(voyage => voyage.Persons)
+                .Include(voyage => voyage.TravelType)
+                .Include(voyage => voyage.Extras)
+                .ThenInclude(extra => extra.ExtraDetail)
+                .Include(voyage => voyage.Destination)
+                .ThenInclude(dest => dest.Country)
+                .FirstOrDefault(voyage => voyage.Id == voyageIdInt);
+            return View(voyage);
         }
 
         // POST: Voyages/Edit/5

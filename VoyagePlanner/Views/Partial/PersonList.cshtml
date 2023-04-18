@@ -60,6 +60,8 @@
 
     function removePerson(id){
         var alreadyExistingPersons = [];
+        var voyageId = document.querySelector("#voyageId").value;
+
         $(".listValues").toArray().forEach(listValue => alreadyExistingPersons.push({
             id: listValue.getAttribute("id"),
             firstname: listValue.getAttribute("firstname"),
@@ -74,7 +76,7 @@
             headers: {
                 'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
             },
-            data: JSON.stringify({ alreadyExistingPersons }),
+            data: JSON.stringify({ voyageId, alreadyExistingPersons }),
             success: function (result) {
                 $("#toUpdate").html(result);
             }

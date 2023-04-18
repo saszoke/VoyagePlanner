@@ -2,6 +2,7 @@
 <script src="~/lib/jquery/dist/jquery.min.js"></script>
 <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
 <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+@model VoyagePlanner.Models.Voyage
 
 @{
     ViewData["Title"] = "Voyage Planner";
@@ -17,6 +18,7 @@
     }
 }
 <h3>Passangers</h3>
+@Html.Hidden("voyageId", Model.Id)
 <div class=@visible>
     @Html.Partial("~/Views/Partial/PersonList.cshtml", list)
 </div>
@@ -48,6 +50,7 @@
         var lastName = formData.get("Lastname");
         var dateOfBirth = formData.get("DateOfBirth");
         var chosenAllowance = document.querySelector('input[name="allowance-choice"]:checked').value;
+        var voyageId = document.querySelector("#voyageId").value;
 
         var alreadyExistingPersons = [];
         $(".listValues").toArray().forEach(listValue => alreadyExistingPersons.push({
@@ -66,7 +69,7 @@
                 headers: {
                     'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
                 },
-                data: JSON.stringify({ firstName, lastName, dateOfBirth, chosenAllowance, alreadyExistingPersons }),
+                data: JSON.stringify({ voyageId, firstName, lastName, dateOfBirth, chosenAllowance, alreadyExistingPersons }),
                 success: function (result) {
                     $("#toUpdate").html(result);
                 }
@@ -82,6 +85,8 @@
         var dateOfBirth = formData.get("DateOfBirth");
         var chosenAllowance = document.querySelector('input[name="allowance-choice"]:checked').value;
         var Id = formData.get("Id");
+        var voyageId = document.querySelector("#voyageId").value;
+
 
         var alreadyExistingPersons = [];
         $(".listValues").toArray().forEach(listValue => alreadyExistingPersons.push({
@@ -100,7 +105,7 @@
                 headers: {
                     'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
                 },
-                data: JSON.stringify({ Id, firstName, lastName, dateOfBirth, chosenAllowance, alreadyExistingPersons }),
+                data: JSON.stringify({voyageId, Id, firstName, lastName, dateOfBirth, chosenAllowance, alreadyExistingPersons }),
                 success: function (result) {
                     $("#toUpdate").html(result);
                 }

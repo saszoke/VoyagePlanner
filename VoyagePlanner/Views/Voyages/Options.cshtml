@@ -40,7 +40,7 @@
         </dd>
     </dl>
     <div id="toUpdate">
-        @Html.Partial("~/Views/Partial/PersonsContainer.cshtml")
+        @Html.Partial("~/Views/Partial/PersonsContainer.cshtml", Model)
     </div>
     <div class="accordion">
         <div class="accordion-item">
@@ -60,6 +60,7 @@
     </div>
     
 </div>
+<button class="btn btn-outline-success mt-2" onclick="checkout(@Model.Id)">Checkout</button>
 <div style="display: none">
     <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
     <a asp-action="Index">Back to List</a>
@@ -73,11 +74,31 @@
         $('[id*="extraQuantity"]').toArray().forEach(element =>{
             if(element.value > 0){
                 extras.push({
-                    id: element.id
+                    id: element.id.toString().substring(element.id.toString().length -1),
+                    quantity: element.value
                 });
             }
         })
-        console.log(extras);
         return extras;
+    }
+    function checkout(id){
+        let body = {
+            voyageId: id,
+            extras: gatherExtraValues()
+        }
+
+        $.ajax({
+            url: '/Voyages/InitiateCheckout',
+            method: 'POST',
+            contentType: "application/json",
+            headers: {
+                'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+            },
+            data: JSON.stringify(body),
+            dataType: "json",
+            success: function (response) {
+                window.location.href = response.url;
+            }
+        });
     }
 </script>
