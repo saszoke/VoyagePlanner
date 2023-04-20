@@ -334,6 +334,7 @@ namespace VoyagePlanner.Controllers
                 .Include(voyage => voyage.Destination)
                 .ThenInclude(dest => dest.Country)
                 .FirstOrDefault(voyage => voyage.Id == voyageIdInt);
+
             return View(voyage);
         }
 
